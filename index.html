@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Weather</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="card">
+      <div class="search">
+        <input type="text" placeholder="Enter city name" spellcheck="false" />
+        <button><img src="images/search.png" alt="search" /></button>
+      </div>
+      <div class="error">
+        <p>Invalid location name</p>
+      </div>
+      <div class="weather">
+        <img src="images/rain.png" alt="rain" class="weather-icon" />
+        <h3 class="condition">Rain</h3>
+        <h1 class="temp">22 C</h1>
+        <h2 class="city">New York</h2>
+        <div class="details">
+          <div class="col">
+            <img src="images/humidity.png" alt="humidity" />
+            <div>
+              <p class="humidity">50%</p>
+              <p>Humidity</p>
+            </div>
+          </div>
+          <div class="col">
+            <img src="images/wind.png" alt="wind" />
+            <div>
+              <p class="wind">15 km/h</p>
+              <p>Wind</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const apiKey = "your-api-key";
+      const apiUrl = "https://api.weatherapi.com/v1/current.json?";
+
+      const searchBox = document.querySelector(".search input");
+      const searchBtn = document.querySelector(".search button");
+
+      async function getWeather(city) {
+        const res = await fetch(apiUrl + `key=${apiKey}` + "&" + `q=${city}`);
+
+        if (res.status == 400) {
+          document.querySelector(".error").style.display = "block";
+          document.querySelector(".weather").style.display = "none";
+        } else {
+          var data = await res.json();
+
+          document.querySelector(".city").innerHTML = data.location.name;
+          document.querySelector(".temp").innerHTML =
+            data.current.temp_c + "°c";
+          document.querySelector(".humidity").innerHTML =
+            data.current.humidity + "%";
+          document.querySelector(".wind").innerHTML =
+            data.current.wind_kph + " km/h";
+          document.querySelector(".condition").innerHTML =
+            data.current.condition.text;
+          document.querySelector(".weather-icon").src =
+            data.current.condition.icon;
+
+          document.querySelector(".weather").style.display = "block";
+          document.querySelector(".error").style.display = "none";
+        }
+      }
+
+      searchBtn.addEventListener("click", () => {
+        getWeather(searchBox.value);
+      });
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
